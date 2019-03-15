@@ -7,9 +7,17 @@ import com.wzk.util.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LabelService {
@@ -77,5 +85,60 @@ public class LabelService {
         return labelDao.findAllByStateIs("1");
     }
 
+    /**
+     * 条件查询
+     * @param searchMap
+     * @return
+     */
+    public List<Label> search(Map<String,String> searchMap) {
+        Specification spec = getSpecification(searchMap);
+        List labeList = labelDao.findAll(spec);
+       return labeList;
+    }
+
+    /**
+     * 条件查询 + 分页
+     * @param searchMap
+     * @return
+     */
+    public Page<Label> search(Map<String,String> searchMap,Integer page,Integer size) {
+        Specification spec = getSpecification(searchMap);
+        Page<Label> labelPage = labelDao.findAll(spec,new PageRequest(page,size));
+        return labelPage;
+    }
+
+    private Specification getSpecification(Map<String, String> searchMap) {
+        return new Specification() {
+                @Override
+                public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder criteriaBuilder) {
+                    String labelname = searchMap.get("labelname");
+                    String state = searchMap.get("state");
+                    String count = searchMap.get("count");
+                    String recommend = searchMap.get("recommend");
+                    List<Predicate> predicateList = new ArrayList<>();
+
+                    if(!StringUtils.isEmpty(labelname)) {
+                        Predicate predicate = criteriaBuilder.like(root.get("labelname").as(String.class), labelname);
+                        predicateList.add(predicate);
+                    }
+                    if(!StringUtils.isEmpty(state)) {
+                        Predicate predicate = criteriaBuilder.equal(root.get("state").as(String.class), state);
+                        predicateList.add(predicate);
+                    }
+                    if(!StringUtils.isEmpty(count)) {
+                        Predicate predicate = criteriaBuilder.equal(root.get("count").as(String.class), count);
+                        predicateList.add(predicate);
+                    }
+                    if(!StringUtils.isEmpty(recommend)) {
+                        Predicate predicate = criteriaBuilder.equal(root.get("recommend").as(String.class), recommend);
+                        predicateList.add(predicate);
+                    }
+
+                    Predicate predicate = criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+
+                    return predicate;
+                }
+            };
+    }
 
 }

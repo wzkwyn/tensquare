@@ -6,9 +6,11 @@ import com.wzk.entity.PageResult;
 import com.wzk.entity.Result;
 import com.wzk.entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("label")
@@ -91,6 +93,18 @@ public class LabelController {
     public Result findList() {
         List<Label> list = labelService.findList();
         return new Result(true,StatusCode.OK,"查询成功",list);
+    }
+
+    @RequestMapping(method = RequestMethod.POST,value = "search")
+    public Result search(@RequestBody Map<String,String> searchMap) {
+        List<Label> list = labelService.search(searchMap);
+        return new Result(true,StatusCode.OK,"搜索成功",list);
+    }
+
+    @RequestMapping(method = RequestMethod.POST,value = "search/{page}/{size}")
+    public Result search(@RequestBody Map<String,String> searchMap,@PathVariable("page") Integer page,@PathVariable("size") Integer size) {
+        Page<Label> labelPage = labelService.search(searchMap,page,size);
+        return new Result(true,StatusCode.OK,"分页查询成功",new PageResult<Label>(labelPage.getTotalElements(),labelPage.getContent()));
     }
 
 
