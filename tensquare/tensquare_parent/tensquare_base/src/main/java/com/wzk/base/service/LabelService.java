@@ -2,7 +2,6 @@ package com.wzk.base.service;
 
 import com.wzk.base.dao.LabelDao;
 import com.wzk.base.pojo.Label;
-import com.wzk.entity.PageResult;
 import com.wzk.util.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -103,10 +102,15 @@ public class LabelService {
      */
     public Page<Label> search(Map<String,String> searchMap,Integer page,Integer size) {
         Specification spec = getSpecification(searchMap);
-        Page<Label> labelPage = labelDao.findAll(spec,new PageRequest(page,size));
+        Page<Label> labelPage = labelDao.findAll(spec,PageRequest.of(page-1,size));
         return labelPage;
     }
 
+    /**
+     * 构建标签特殊查询条件
+     * @param searchMap
+     * @return
+     */
     private Specification getSpecification(Map<String, String> searchMap) {
         return new Specification() {
                 @Override
