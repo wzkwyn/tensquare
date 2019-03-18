@@ -111,5 +111,32 @@ public class ProblemController {
 		List<Problem> problemList = problemService.newList(labelId, page, size);
 		return new Result(true,StatusCode.OK,"根据标签ID查询最新问答列表成功",problemList);
 	}
+
+	/**
+	 * 根据标签ID查询人们回答列表
+	 * @param labelid
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST,value = "/search/hotlist/{labelid}/{page}/{size}")
+	public Result hotList(@PathVariable String labelid, @PathVariable Integer page,@PathVariable Integer size) {
+		List<Problem> problemList = problemService.hotList(labelid, page, size);
+		return new Result(true,StatusCode.OK,"查询热门问答列表成功",problemList);
+	}
+
+	/**
+	 * 根据标签ID查询人们回答列表
+	 * @param labelid
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST,value = "/search/waitlist/{labelid}/{page}/{size}")
+	public Result waitList(@PathVariable String labelid, @PathVariable Integer page,@PathVariable Integer size) {
+		List<Problem> problemList = problemService.waitList(labelid, page, size);
+		return new Result(true,StatusCode.OK,"查询热门问答列表成功",problemList);
+	}
+
 	
 }

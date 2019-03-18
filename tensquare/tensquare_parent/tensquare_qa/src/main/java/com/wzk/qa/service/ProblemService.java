@@ -159,4 +159,29 @@ public class ProblemService {
 		return problemDao.newList(labelid,pageRequest);
 	}
 
+	/**
+	 * 根据标签ID查询热门问答列表
+	 * @param labelid
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Problem> hotList(String labelid,Integer page,Integer size) {
+		PageRequest pageRequest = PageRequest.of(page-1,size);
+		return problemDao.hotList(labelid,pageRequest);
+	}
+
+	/**
+	 * 根据标签ID查询等待回答列表
+	 * @param labelid
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public List<Problem> waitList(String labelid,Integer page,Integer size) {
+		PageRequest pageRequest = PageRequest.of(page-1,size);
+		return problemDao.waitlist(labelid,pageRequest);
+	}
+
+
 }

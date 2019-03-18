@@ -14,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("label")
+@CrossOrigin
 public class LabelController {
     @Autowired
     private LabelService labelService;
